@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5" />
+    <title>Inspector Dashboard - Tawi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            background: #f4f7fa;
+            color: #1e293b;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 24px 28px 32px;
+        }
+
+        .app-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e9edf2;
+            margin-bottom: 28px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            background: #1e7e34;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .logo-text span {
+            color: #1e7e34;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .badge-role {
+            background: #eef2f6;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn {
+            background: #1e7e34;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #16632a;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #1e7e34;
+            color: #1e7e34;
+        }
+        .btn-outline:hover {
+            background: #1e7e34;
+            color: white;
+        }
+        .btn-sm {
+            padding: 4px 14px;
+            font-size: 0.8rem;
+        }
+        .btn-danger {
+            background: #b91c1c;
+        }
+        .btn-danger:hover {
+            background: #991b1b;
+        }
+        .btn-success {
+            background: #059669;
+        }
+        .btn-success:hover {
+            background: #047857;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border-radius: 18px;
+            padding: 18px 20px;
+            border-left: 5px solid #1e7e34;
+        }
+        .stat-card .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+        .stat-card .stat-label {
+            font-size: 0.85rem;
+            color: #475569;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 24px 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            background: #fafcff;
+            border-radius: 18px;
+            border: 1px solid #e9edf2;
+            padding: 4px 0;
+            margin: 12px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            text-align: left;
+            padding: 14px 16px;
+            background: #f1f5f9;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        td {
+            padding: 14px 16px;
+            border-top: 1px solid #ecf1f7;
+            vertical-align: middle;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #e9edf2;
+            color: #334155;
+        }
+        .badge-status.approved {
+            background: #dcfce7;
+            color: #166534;
+        }
+        .badge-status.rejected {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        .badge-status.pending {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+        .badge-status.live {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .badge-status.booked-awaiting {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .badge-status.pending-review {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .text-muted {
+            color: #64748b;
+        }
+
+        input[type="text"] {
+            padding: 6px 10px;
+            border: 1.5px solid #dce2ea;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            width: 140px;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            background: none;
+            border: none;
+        }
+        .modal-close:hover {
+            color: #1e293b;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-seedling"></i></div>
+                <div class="logo-text"><span>Tawi</span></div>
+            </div>
+            <div class="header-actions">
+                <span class="badge-role"><i class="fas fa-user-circle"></i> Inspector</span>
+                <a href="index.html" class="btn btn-outline btn-sm"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-number" id="pendingPhysical">0</div><div class="stat-label">Awaiting Physical Inspection</div></div>
+            <div class="stat-card"><div class="stat-number" id="approvedReady">0</div><div class="stat-label">Approved / Ready</div></div>
+            <div class="stat-card"><div class="stat-number" id="pendingDigital">0</div><div class="stat-label">Digital Review Queue</div></div>
+        </div>
+
+        <!-- Digital Review -->
+        <h3 class="section-title"><i class="fas fa-clipboard-check"></i> Digital Review (Listings)</h3>
+        <div id="digitalReviewContainer">
+            <p class="text-muted">No listings pending digital review.</p>
+        </div>
+
+        <!-- Physical Inspection -->
+        <h3 class="section-title"><i class="fas fa-warehouse"></i> Physical Inspection Queue</h3>
+        <div id="physicalInspectionContainer">
+            <p class="text-muted">No orders awaiting physical inspection at checkpoints.</p>
+        </div>
+
+        <!-- Approved Ready -->
+        <h3 class="section-title"><i class="fas fa-check-circle"></i> Approved / Ready for Dispatch</h3>
+        <div id="approvedReadyContainer">
+            <p class="text-muted">No approved orders ready for dispatch.</p>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Mock data
+        const MOCK = {
+            listings: [
+                { id: 101, farmerId: 1, crop: 'Maize', quantity: '50 Bags', checkpoint: 'Nakuru Central', status: 'live' },
+                { id: 102, farmerId: 2, crop: 'Tomatoes', quantity: '30 Boxes', checkpoint: 'Kiambu Town', status: 'pending_review' },
+                { id: 103, farmerId: 1, crop: 'Kale', quantity: '20 Bunches', checkpoint: 'Nakuru Central', status: 'pending_review' },
+                { id: 104, farmerId: 2, crop: 'Beans', quantity: '10 Bags', checkpoint: 'Kiambu Town', status: 'live' },
+            ],
+            orders: [
+                { id: 201, listingId: 103, buyer: 'Supermarket Ltd', total: 5400, status: 'booked_awaiting',
+                    farmerId: 1, checkpoint: 'Nakuru Central' },
+                { id: 202, listingId: 101, buyer: 'Green Grocers', total: 7800, status: 'approved_ready',
+                    farmerId: 1, checkpoint: 'Nakuru Central' },
+                { id: 203, listingId: 102, buyer: 'City Mart', total: 3200, status: 'delivered',
+                    farmerId: 2, checkpoint: 'Kiambu Town' },
+            ],
+            transporters: ['FastHaul Logistics', 'GreenTransit']
+        };
+
+        function updateDashboard() {
+            const pendingPhysical = MOCK.orders.filter(o => o.status === 'booked_awaiting');
+            const approvedReady = MOCK.orders.filter(o => o.status === 'approved_ready');
+            const pendingDigital = MOCK.listings.filter(l => l.status === 'pending_review');
+
+            document.getElementById('pendingPhysical').textContent = pendingPhysical.length;
+            document.getElementById('approvedReady').textContent = approvedReady.length;
+            document.getElementById('pendingDigital').textContent = pendingDigital.length;
+
+            // Digital Review
+            const digitalContainer = document.getElementById('digitalReviewContainer');
+            if (pendingDigital.length === 0) {
+                digitalContainer.innerHTML = '<p class="text-muted">No listings pending digital review.</p>';
+            } else {
+                let html = `<div class="table-wrap"><table>
+                    <thead><tr><th>Listing ID</th><th>Crop</th><th>Quantity</th><th>Checkpoint</th><th>Action</th></tr></thead>
+                    <tbody>`;
+                pendingDigital.forEach(l => {
+                    html += `<tr>
+                        <td>#${l.id}</td>
+                        <td>${l.crop}</td>
+                        <td>${l.quantity}</td>
+                        <td>${l.checkpoint}</td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="approveListing(${l.id})"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectListing(${l.id})"><i class="fas fa-times"></i> Reject</button>
+                        </td>
+                    </tr>`;
+                });
+                html += `</tbody></table></div>`;
+                digitalContainer.innerHTML = html;
+            }
+
+            // Physical Inspection
+            const physicalContainer = document.getElementById('physicalInspectionContainer');
+            if (pendingPhysical.length === 0) {
+                physicalContainer.innerHTML = '<p class="text-muted">No orders awaiting physical inspection at checkpoints.</p>';
+            } else {
+                let html = `<div class="table-wrap"><table>
+                    <thead><tr><th>Order ID</th><th>Checkpoint</th><th>Farmer</th><th>Notes</th><th>Action</th></tr></thead>
+                    <tbody>`;
+                pendingPhysical.forEach(o => {
+                    html += `<tr>
+                        <td>#${o.id}</td>
+                        <td>${o.checkpoint}</td>
+                        <td>Farmer #${o.farmerId}</td>
+                        <td><input type="text" id="inspectNote_${o.id}" placeholder="Quality notes..." /></td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="inspectOrder(${o.id}, 'approve')"><i class="fas fa-check"></i> Approve</button>
+                            <button class="btn btn-sm btn-danger" onclick="inspectOrder(${o.id}, 'reject')"><i class="fas fa-times"></i> Reject</button>
+                        </td>
+                    </tr>`;
+                });
+                html += `</tbody></table></div>`;
+                physicalContainer.innerHTML = html;
+            }
+
+            // Approved Ready
+            const readyContainer = document.getElementById('approvedReadyContainer');
+            if (approvedReady.length === 0) {
+                readyContainer.innerHTML = '<p class="text-muted">No approved orders ready for dispatch.</p>';
+            } else {
+                let html = `<div class="table-wrap"><table>
+                    <thead><tr><th>Order ID</th><th>Checkpoint</th><th>Transporter</th><th>Status</th></tr></thead>
+                    <tbody>`;
+                approvedReady.forEach(o => {
+                    html += `<tr>
+                        <td>#${o.id}</td>
+                        <td>${o.checkpoint}</td>
+                        <td>${MOCK.transporters[0]}</td>
+                        <td><span class="badge-status approved">Ready for Pickup</span></td>
+                    </tr>`;
+                });
+                html += `</tbody></table></div>`;
+                readyContainer.innerHTML = html;
+            }
+        }
+
+        function approveListing(listingId) {
+            const listing = MOCK.listings.find(l => l.id === listingId);
+            if (listing) {
+                listing.status = 'live';
+                showModal('Listing Approved', 'The listing is now live and visible to buyers.');
+                updateDashboard();
+            }
+        }
+
+        function rejectListing(listingId) {
+            const listing = MOCK.listings.find(l => l.id === listingId);
+            if (listing) {
+                listing.status = 'cancelled';
+                showModal('Listing Rejected', 'The listing has been rejected and removed from the system.');
+                updateDashboard();
+            }
+        }
+
+        function inspectOrder(orderId, decision) {
+            const note = document.getElementById(`inspectNote_${orderId}`)?.value || 'No notes provided.';
+            const order = MOCK.orders.find(o => o.id === orderId);
+            if (!order) return;
+
+            if (decision === 'approve') {
+                order.status = 'approved_ready';
+                const listing = MOCK.listings.find(l => l.id === order.listingId);
+                if (listing) listing.status = 'approved_ready';
+                showModal('Order Approved', `
+                    <p><strong>Order #${orderId} has been approved.</strong></p>
+                    <p>Quality notes: ${note}</p>
+                    <p class="text-muted">A transporter has been notified for pickup at ${order.checkpoint}.</p>
+                `);
+            } else {
+                order.status = 'cancelled';
+                const listing = MOCK.listings.find(l => l.id === order.listingId);
+                if (listing) listing.status = 'cancelled';
+                showModal('Order Rejected', `
+                    <p><strong>Order #${orderId} has been rejected.</strong></p>
+                    <p>Reason: ${note}</p>
+                    <p class="text-muted">The buyer will be refunded the full amount.</p>
+                `);
+            }
+            updateDashboard();
+        }
+
+        function showModal(title, content) {
+            document.getElementById('modalBody').innerHTML = `
+                <h3 style="margin-bottom:12px;">${title}</h3>
+                <div>${content}</div>
+            `;
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        updateDashboard();
+    </script>
+</body>
+</html>
